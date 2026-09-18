@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}User Management — TraceX Admin{% endblock %}
+
+{% block content %}
+<div class="flex-between" style="margin-bottom: 1.5rem;">
+    <div>
+        <h1 style="font-size: 1.5rem; font-weight: 700;">User & Role Management</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Control investigator accounts and role-based access permissions.
+        </p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+    <!-- Create User Card -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Provision New Account</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('auth.manage_users') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" required placeholder="e.g. jdoe">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required minlength="6" placeholder="Min 6 characters">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="role">Role Permission</label>
+                    <select id="role" name="role" class="form-control" required>
+                        <option value="INVESTIGATOR">INVESTIGATOR (Case & Evidence Operations)</option>
+                        <option value="ADMIN">ADMIN (Full Governance & Deletion)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Create Account
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Users Table Card -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">System Users ({{ users|length }})</h3>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td>#{{ u.id }}</td>
+                            <td style="font-weight: 600;">{{ u.username }}</td>
+                            <td>
+                                <span class="user-role-tag role-{{ u.role.lower() }}">{{ u.role }}</span>
+                            </td>
+                            <td style="color: var(--text-secondary); font-size: 0.8rem;">{{ u.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
