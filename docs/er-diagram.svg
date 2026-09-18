@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" width="100%" height="100%" style="background:#0b0f19; font-family:'Inter', sans-serif;">
+  <defs>
+    <style>
+      .tbl-header { fill: #1f2937; stroke: #374151; stroke-width: 1.5; }
+      .tbl-body { fill: #111827; stroke: #374151; stroke-width: 1.5; }
+      .tbl-title { fill: #38bdf8; font-size: 14px; font-weight: bold; }
+      .col-pk { fill: #f59e0b; font-size: 11px; font-family: monospace; font-weight: bold; }
+      .col-fk { fill: #60a5fa; font-size: 11px; font-family: monospace; }
+      .col-name { fill: #f9fafb; font-size: 11px; font-family: monospace; }
+      .col-type { fill: #9ca3af; font-size: 10px; font-family: monospace; }
+      .line { stroke: #0ea5e9; stroke-width: 1.5; stroke-dasharray: 4; fill: none; }
+      .line-solid { stroke: #38bdf8; stroke-width: 2; fill: none; }
+    </style>
+  </defs>
+
+  <!-- Title -->
+  <text x="500" y="35" text-anchor="middle" fill="#f9fafb" font-size="20" font-weight="bold">TraceX Relational Database Schema (3NF ER Diagram)</text>
+  <text x="500" y="55" text-anchor="middle" fill="#9ca3af" font-size="12">Six Frozen Entities • Foreign Key Constraints • Append-Only Ledger</text>
+
+  <!-- USER Table -->
+  <g transform="translate(50, 90)">
+    <rect class="tbl-header" width="220" height="30" rx="4"/>
+    <text class="tbl-title" x="110" y="20" text-anchor="middle">USER</text>
+    <rect class="tbl-body" y="30" width="220" height="110" rx="4"/>
+    <text class="col-pk" x="10" y="50">PK  id</text><text class="col-type" x="160" y="50">INTEGER</text>
+    <text class="col-name" x="10" y="70">    username</text><text class="col-type" x="160" y="70">TEXT (UQ)</text>
+    <text class="col-name" x="10" y="90">    password_hash</text><text class="col-type" x="160" y="90">TEXT</text>
+    <text class="col-name" x="10" y="110">    role</text><text class="col-type" x="160" y="110">CHECK(role)</text>
+    <text class="col-name" x="10" y="130">    created_at</text><text class="col-type" x="160" y="130">TIMESTAMP</text>
+  </g>
+
+  <!-- CASE Table -->
+  <g transform="translate(390, 90)">
+    <rect class="tbl-header" width="220" height="30" rx="4"/>
+    <text class="tbl-title" x="110" y="20" text-anchor="middle">"CASE"</text>
+    <rect class="tbl-body" y="30" width="220" height="150" rx="4"/>
+    <text class="col-pk" x="10" y="50">PK  id</text><text class="col-type" x="160" y="50">INTEGER</text>
+    <text class="col-name" x="10" y="70">    title</text><text class="col-type" x="160" y="70">TEXT</text>
+    <text class="col-name" x="10" y="90">    incident_type</text><text class="col-type" x="160" y="90">TEXT</text>
+    <text class="col-name" x="10" y="110">    description</text><text class="col-type" x="160" y="110">TEXT</text>
+    <text class="col-name" x="10" y="130">    status</text><text class="col-type" x="160" y="130">OPEN/CLOSED</text>
+    <text class="col-fk" x="10" y="150">FK  investigator_id</text><text class="col-type" x="160" y="150">User(id)</text>
+    <text class="col-name" x="10" y="170">    created_at</text><text class="col-type" x="160" y="170">TIMESTAMP</text>
+  </g>
+
+  <!-- EVIDENCE Table -->
+  <g transform="translate(730, 90)">
+    <rect class="tbl-header" width="230" height="30" rx="4"/>
+    <text class="tbl-title" x="115" y="20" text-anchor="middle">EVIDENCE</text>
+    <rect class="tbl-body" y="30" width="230" height="210" rx="4"/>
+    <text class="col-pk" x="10" y="50">PK  id</text><text class="col-type" x="160" y="50">INTEGER</text>
+    <text class="col-fk" x="10" y="70">FK  case_id</text><text class="col-type" x="160" y="70">Case(id)</text>
+    <text class="col-name" x="10" y="90">    name</text><text class="col-type" x="160" y="90">TEXT</text>
+    <text class="col-name" x="10" y="110">    type</text><text class="col-type" x="160" y="110">TEXT</text>
+    <text class="col-name" x="10" y="130">    source</text><text class="col-type" x="160" y="130">TEXT</text>
+    <text class="col-name" x="10" y="150">    file_path</text><text class="col-type" x="160" y="150">TEXT</text>
+    <text class="col-name" x="10" y="170">    file_size</text><text class="col-type" x="160" y="170">INTEGER</text>
+    <text class="col-name" x="10" y="190">    sha256_original</text><text class="col-type" x="160" y="190">TEXT (HEX)</text>
+    <text class="col-name" x="10" y="210">    sha256_current</text><text class="col-type" x="160" y="210">TEXT (HEX)</text>
+    <text class="col-name" x="10" y="230">    integrity_status</text><text class="col-type" x="160" y="230">ENUM CHECK</text>
+  </g>
+
+  <!-- CUSTODY RECORD Table -->
+  <g transform="translate(730, 380)">
+    <rect class="tbl-header" width="230" height="30" rx="4"/>
+    <text class="tbl-title" x="115" y="20" text-anchor="middle">CUSTODY_RECORD</text>
+    <rect class="tbl-body" y="30" width="230" height="170" rx="4"/>
+    <text class="col-pk" x="10" y="50">PK  id</text><text class="col-type" x="160" y="50">INTEGER</text>
+    <text class="col-fk" x="10" y="70">FK  evidence_id</text><text class="col-type" x="160" y="70">Evidence(id)</text>
+    <text class="col-name" x="10" y="90">    action</text><text class="col-type" x="160" y="90">ACTION ENUM</text>
+    <text class="col-fk" x="10" y="110">FK  actor_id</text><text class="col-type" x="160" y="110">User(id)</text>
+    <text class="col-name" x="10" y="130">    prev_status</text><text class="col-type" x="160" y="130">TEXT</text>
+    <text class="col-name" x="10" y="150">    new_status</text><text class="col-type" x="160" y="150">TEXT</text>
+    <text class="col-name" x="10" y="170">    remarks</text><text class="col-type" x="160" y="170">TEXT</text>
+    <text class="col-name" x="10" y="190">    timestamp</text><text class="col-type" x="160" y="190">TIMESTAMP</text>
+  </g>
+
+  <!-- SECURITY EVENT Table -->
+  <g transform="translate(390, 380)">
+    <rect class="tbl-header" width="220" height="30" rx="4"/>
+    <text class="tbl-title" x="110" y="20" text-anchor="middle">SECURITY_EVENT</text>
+    <rect class="tbl-body" y="30" width="220" height="170" rx="4"/>
+    <text class="col-pk" x="10" y="50">PK  id</text><text class="col-type" x="160" y="50">INTEGER</text>
+    <text class="col-fk" x="10" y="70">FK  case_id</text><text class="col-type" x="160" y="70">Case(id)</text>
+    <text class="col-name" x="10" y="90">    event_type</text><text class="col-type" x="160" y="90">TEXT</text>
+    <text class="col-name" x="10" y="110">    event_user</text><text class="col-type" x="160" y="110">TEXT</text>
+    <text class="col-name" x="10" y="130">    source</text><text class="col-type" x="160" y="130">TEXT</text>
+    <text class="col-name" x="10" y="150">    ip_ref</text><text class="col-type" x="160" y="150">TEXT</text>
+    <text class="col-name" x="10" y="170">    event_timestamp</text><text class="col-type" x="160" y="170">TIMESTAMP</text>
+    <text class="col-name" x="10" y="190">    raw_line</text><text class="col-type" x="160" y="190">TEXT</text>
+  </g>
+
+  <!-- FINDING Table -->
+  <g transform="translate(50, 380)">
+    <rect class="tbl-header" width="220" height="30" rx="4"/>
+    <text class="tbl-title" x="110" y="20" text-anchor="middle">FINDING</text>
+    <rect class="tbl-body" y="30" width="220" height="170" rx="4"/>
+    <text class="col-pk" x="10" y="50">PK  id</text><text class="col-type" x="160" y="50">INTEGER</text>
+    <text class="col-fk" x="10" y="70">FK  case_id</text><text class="col-type" x="160" y="70">Case(id)</text>
+    <text class="col-name" x="10" y="90">    kind</text><text class="col-type" x="160" y="90">INDICATOR/CORR</text>
+    <text class="col-name" x="10" y="110">    rule_or_key</text><text class="col-type" x="160" y="110">TEXT</text>
+    <text class="col-name" x="10" y="130">    severity</text><text class="col-type" x="160" y="130">CRITICAL..INFO</text>
+    <text class="col-name" x="10" y="150">    related_event_ids</text><text class="col-type" x="160" y="150">JSON TEXT</text>
+    <text class="col-name" x="10" y="170">    related_evid_ids</text><text class="col-type" x="160" y="170">JSON TEXT</text>
+    <text class="col-name" x="10" y="190">    description</text><text class="col-type" x="160" y="190">TEXT</text>
+  </g>
+
+  <!-- Relationship Connectors -->
+  <!-- User to Case (1:N) -->
+  <path class="line-solid" d="M 270 145 L 390 145"/>
+  <text x="280" y="140" fill="#9ca3af" font-size="10">1</text>
+  <text x="375" y="140" fill="#9ca3af" font-size="10">N</text>
+
+  <!-- Case to Evidence (1:N) -->
+  <path class="line-solid" d="M 610 160 L 730 160"/>
+  <text x="620" y="155" fill="#9ca3af" font-size="10">1</text>
+  <text x="715" y="155" fill="#9ca3af" font-size="10">N</text>
+
+  <!-- Evidence to CustodyRecord (1:N) -->
+  <path class="line-solid" d="M 845 330 L 845 380"/>
+  <text x="850" y="345" fill="#9ca3af" font-size="10">1</text>
+  <text x="850" y="375" fill="#9ca3af" font-size="10">N</text>
+
+  <!-- Case to SecurityEvent (1:N) -->
+  <path class="line-solid" d="M 500 270 L 500 380"/>
+  <text x="505" y="285" fill="#9ca3af" font-size="10">1</text>
+  <text x="505" y="375" fill="#9ca3af" font-size="10">N</text>
+
+  <!-- Case to Finding (1:N) -->
+  <path class="line-solid" d="M 390 220 L 160 220 L 160 380"/>
+  <text x="375" y="215" fill="#9ca3af" font-size="10">1</text>
+  <text x="165" y="375" fill="#9ca3af" font-size="10">N</text>
+
+  <!-- User to CustodyRecord (1:N) -->
+  <path class="line" d="M 160 230 L 160 350 L 710 350 L 710 490 L 730 490"/>
+  <text x="165" y="340" fill="#9ca3af" font-size="10">1:N (actor_id)</text>
+</svg>
