@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "system": "TraceX Digital Forensics & Incident Response",
+    "version": "1.0.0",
+    "report_generated_at": "2026-09-17 13:18:08 UTC",
+    "disclaimer": "LEGAL & EVIDENTIARY DISCLAIMER: This investigation report was produced using TraceX educational DFIR software. Items classified as 'Detected Indicators' or 'System-Generated Findings' represent rule-based algorithmic inferences and must never be construed as legally confirmed facts without corroborating physical forensic proof."
+  },
+  "case": {
+    "id": 1,
+    "title": "Route Verification Incident",
+    "incident_type": "Unauthorized Access",
+    "description": "Validating all web endpoints.",
+    "status": "OPEN",
+    "investigator_id": 2,
+    "created_at": "2026-09-17 13:18:08",
+    "closed_at": null,
+    "investigator_username": "investigator"
+  },
+  "evidence_summary": {
+    "total_items": 0,
+    "items": []
+  },
+  "chain_of_custody": {
+    "total_records": 0,
+    "records": []
+  },
+  "security_events_summary": {
+    "total_events": 0,
+    "distribution": {}
+  },
+  "findings": {
+    "total_findings": 0,
+    "indicators": [],
+    "correlations": [],
+    "severity_counts": {
+      "INFO": 0,
+      "LOW": 0,
+      "MEDIUM": 0,
+      "HIGH": 0,
+      "CRITICAL": 0
+    }
+  },
+  "timeline": {
+    "total_items": 0,
+    "items": [],
+    "timeline_items": [],
+    "grouped_by_day": {}
+  }
+}
