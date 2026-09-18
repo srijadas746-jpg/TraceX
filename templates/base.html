@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TraceX — Digital Incident Investigation & Evidence Management{% endblock %}</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body class="app-body">
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="{{ url_for('cases.dashboard') }}" class="brand-link">
+                    <span class="brand-icon">🛡️</span>
+                    <span class="brand-title">Trace<span class="brand-highlight">X</span></span>
+                    <span class="brand-badge">DFIR WORKSPACE</span>
+                </a>
+            </div>
+
+            {% if current_user %}
+            <nav class="nav-links">
+                <a href="{{ url_for('cases.dashboard') }}" class="nav-item {% if request.endpoint == 'cases.dashboard' %}active{% endif %}">
+                    📊 Dashboard
+                </a>
+                <a href="{{ url_for('cases.list_cases') }}" class="nav-item {% if request.endpoint and 'cases.' in request.endpoint and request.endpoint != 'cases.dashboard' %}active{% endif %}">
+                    📁 Cases
+                </a>
+                {% if current_user.role == 'ADMIN' %}
+                <a href="{{ url_for('auth.manage_users') }}" class="nav-item {% if request.endpoint == 'auth.manage_users' %}active{% endif %}">
+                    👥 User Management
+                </a>
+                {% endif %}
+            </nav>
+
+            <div class="nav-user">
+                <div class="user-pill">
+                    <span class="user-role-tag role-{{ current_user.role.lower() }}">{{ current_user.role }}</span>
+                    <span class="user-name">{{ current_user.username }}</span>
+                </div>
+                <form action="{{ url_for('auth.logout') }}" method="POST" class="inline-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Sign Out</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="nav-user">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-sm btn-primary">Sign In</a>
+            </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-main">
+        <div class="content-container">
+            <!-- Flash Notifications -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <span class="alert-icon">
+                            {% if category == 'success' %}✅
+                            {% elif category == 'danger' %}🚨
+                            {% elif category == 'warning' %}⚠️
+                            {% else %}ℹ️{% endif %}
+                        </span>
+                        <div class="alert-content">{{ message }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Page Body -->
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-disclaimer">
+                <strong>Evidentiary Notice:</strong> TraceX is an educational digital forensics platform.
+                System-generated findings represent algorithmic rule inferences and must never be labeled as confirmed facts.
+            </div>
+            <div class="footer-meta">
+                TraceX v1.0 • SHA-256 Verified Storage • Append-Only Chain of Custody
+            </div>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

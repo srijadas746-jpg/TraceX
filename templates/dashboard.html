@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Forensics Dashboard — TraceX{% endblock %}
+
+{% block content %}
+<div class="flex-between" style="margin-bottom: 1.5rem;">
+    <div>
+        <h1 style="font-size: 1.6rem; font-weight: 700;">Digital Forensics Command Center</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Real-time aggregate status of active investigations, evidence integrity, and rule engine findings.
+        </p>
+    </div>
+    <div>
+        <a href="{{ url_for('cases.create_case') }}" class="btn btn-primary">
+            ➕ Open New Case
+        </a>
+    </div>
+</div>
+
+<!-- Metrics Cards -->
+<div class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-icon" style="color: var(--accent-cyan);">📁</div>
+        <div>
+            <div class="metric-value">{{ cases_metrics.total }}</div>
+            <div class="metric-label">Total Cases ({{ cases_metrics.open }} Open)</div>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon" style="color: #10b981;">💾</div>
+        <div>
+            <div class="metric-value">{{ total_evidence }}</div>
+            <div class="metric-label">Evidence Items ({{ evidence_status_counts.VERIFIED }} Verified)</div>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon" style="color: {% if evidence_status_counts.MODIFIED > 0 %}#ef4444{% else %}#10b981{% endif %};">
+            {% if evidence_status_counts.MODIFIED > 0 %}🚨{% else %}🛡️{% endif %}
+        </div>
+        <div>
+            <div class="metric-value" style="color: {% if evidence_status_counts.MODIFIED > 0 %}#f87171{% endif %};">
+                {{ evidence_status_counts.MODIFIED }}
+            </div>
+            <div class="metric-label">Tampered / Modified</div>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon" style="color: #38bdf8;">📜</div>
+        <div>
+            <div class="metric-value">{{ total_events }}</div>
+            <div class="metric-label">Parsed Security Events</div>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon" style="color: #f59e0b;">🔍</div>
+        <div>
+            <div class="metric-value">{{ total_findings }}</div>
+            <div class="metric-label">System Findings</div>
+        </div>
+    </div>
+</div>
+
+<!-- Visualizations Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <!-- Evidence Integrity Breakdown Chart -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Evidence Integrity Status</h3>
+            <span style="font-size: 0.8rem; color: var(--text-secondary);">SHA-256 Validations</span>
+        </div>
+        <div class="card-body" style="height: 280px; position: relative;">
+            <canvas id="integrityChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Severity Distribution Chart -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Findings Severity Breakdown</h3>
+            <span style="font-size: 0.8rem; color: var(--text-secondary);">Indicators & Correlations</span>
+        </div>
+        <div class="card-body" style="height: 280px; position: relative;">
+            <canvas id="severityChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Cases -->
+<div class="card">
+    <div class="card-header flex-between">
+        <h3 class="card-title">Recent Investigation Cases</h3>
+        <a href="{{ url_for('cases.list_cases') }}" class="btn btn-sm btn-secondary">View All Cases</a>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        {% if recent_cases %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Case ID</th>
+                        <th>Title</th>
+                        <th>Incident Type</th>
+                        <th>Investigator</th>
+                        <th>Status</th>
+                        <th>Opened</th>
+                        <th style="text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in recent_cases %}
+                    <tr>
+                        <td style="font-weight: 600;">#{{ c.id }}</td>
+                        <td>
+                            <a href="{{ url_for('cases.view_case', case_id=c.id) }}" style="color: var(--accent-cyan); text-decoration: none; font-weight: 600;">
+                                {{ c.title }}
+                            </a>
+                        </td>
+                        <td>{{ c.incident_type }}</td>
+                        <td>{{ c.investigator_username or c.investigator_id }}</td>
+                        <td>
+                            <span class="badge badge-{{ c.status.lower() }}">{{ c.status }}</span>
+                        </td>
+                        <td style="color: var(--text-secondary); font-size: 0.85rem;">{{ c.created_at[:16] if c.created_at else 'N/A' }}</td>
+                        <td style="text-align: right;">
+                            <a href="{{ url_for('cases.view_case', case_id=c.id) }}" class="btn btn-sm btn-secondary">
+                                Inspect Workspace →
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📂</div>
+            <div class="empty-title">No Investigation Cases Open</div>
+            <p class="empty-desc">Open a new investigation case to begin acquiring digital evidence, parsing logs, and reconstructing timelines.</p>
+            <a href="{{ url_for('cases.create_case') }}" class="btn btn-primary">Open First Case</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Chart 1: Evidence Integrity
+    const integrityCtx = document.getElementById('integrityChart').getContext('2d');
+    const integrityData = {
+        labels: ['Verified', 'Modified (Alert)', 'Missing', 'Not Verified'],
+        datasets: [{
+            data: [
+                {{ evidence_status_counts.VERIFIED }},
+                {{ evidence_status_counts.MODIFIED }},
+                {{ evidence_status_counts.MISSING }},
+                {{ evidence_status_counts.NOT_VERIFIED }}
+            ],
+            backgroundColor: [
+                '#10b981', // green
+                '#ef4444', // red
+                '#f59e0b', // amber
+                '#6b7280'  // gray
+            ],
+            borderColor: '#111827',
+            borderWidth: 2
+        }]
+    };
+    new Chart(integrityCtx, {
+        type: 'doughnut',
+        data: integrityData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#9ca3af', font: { family: 'Inter', size: 12 } }
+                }
+            }
+        }
+    });
+
+    // Chart 2: Severity Distribution
+    const severityCtx = document.getElementById('severityChart').getContext('2d');
+    const severityData = {
+        labels: ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFO'],
+        datasets: [{
+            label: 'Count',
+            data: [
+                {{ severity_distribution.CRITICAL }},
+                {{ severity_distribution.HIGH }},
+                {{ severity_distribution.MEDIUM }},
+                {{ severity_distribution.LOW }},
+                {{ severity_distribution.INFO }}
+            ],
+            backgroundColor: [
+                '#ef4444',
+                '#f87171',
+                '#fbbf24',
+                '#60a5fa',
+                '#38bdf8'
+            ],
+            borderRadius: 4
+        }]
+    };
+    new Chart(severityCtx, {
+        type: 'bar',
+        data: severityData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0, color: '#9ca3af' },
+                    grid: { color: '#1f2937' }
+                },
+                x: {
+                    ticks: { color: '#9ca3af', font: { family: 'Inter', size: 11 } },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
