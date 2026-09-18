@@ -1,0 +1,5 @@
+timestamp,event_type,user,source,ip_ref
+2026-09-17 11:00:00,LOGIN_SUCCESS,service_daemon,internal-auth,10.0.2.50
+2026-09-17 11:02:15,UNUSUAL_ACCESS,service_daemon,iam-service,10.0.2.50
+2026-09-17 11:08:30,PERMISSION_CHANGED,service_daemon,iam-service,10.0.2.50
+2026-09-17 11:15:00,FILE_MODIFIED,service_daemon,audit-log-server,10.0.2.50

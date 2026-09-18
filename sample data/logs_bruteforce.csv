@@ -1,0 +1,8 @@
+timestamp,event_type,user,source,ip_ref
+2026-09-17 10:00:00,LOGIN_FAILED,victim_corp_admin,ssh-auth,203.0.113.88
+2026-09-17 10:01:15,LOGIN_FAILED,victim_corp_admin,ssh-auth,203.0.113.88
+2026-09-17 10:02:30,LOGIN_FAILED,victim_corp_admin,ssh-auth,203.0.113.88
+2026-09-17 10:04:10,LOGIN_FAILED,victim_corp_admin,ssh-auth,203.0.113.88
+2026-09-17 10:05:45,LOGIN_FAILED,victim_corp_admin,ssh-auth,203.0.113.88
+2026-09-17 10:07:00,ACCOUNT_LOCKED,victim_corp_admin,auth-monitor,203.0.113.88
+2026-09-17 10:15:20,UNUSUAL_ACCESS,victim_corp_admin,bastion-host,203.0.113.88

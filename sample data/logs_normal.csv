@@ -1,0 +1,7 @@
+timestamp,event_type,user,source,ip_ref
+2026-09-17 08:30:00,LOGIN_SUCCESS,alice,internal-ad,10.0.1.15
+2026-09-17 08:35:12,FILE_CREATED,alice,file-server-01,10.0.1.15
+2026-09-17 08:42:05,FILE_MODIFIED,alice,file-server-01,10.0.1.15
+2026-09-17 09:00:00,LOGIN_SUCCESS,bob,internal-ad,10.0.1.22
+2026-09-17 09:15:30,LOGIN_SUCCESS,charlie,vpn-gateway,192.168.10.5
+2026-09-17 09:30:00,FILE_CREATED,bob,file-server-01,10.0.1.22
