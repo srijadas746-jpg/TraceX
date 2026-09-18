@@ -1,0 +1,6 @@
+timestamp,event_type,user,source,ip_ref
+2026-09-17 14:00:00,LOGIN_FAILED,root,ssh-auth,198.51.100.44
+2026-09-17 14:02:10,LOGIN_FAILED,admin,ssh-auth,198.51.100.44
+2026-09-17 14:05:30,LOGIN_FAILED,guest,ssh-auth,198.51.100.44
+2026-09-17 14:08:45,LOGIN_SUCCESS,deployer,ssh-auth,198.51.100.44
+2026-09-17 14:12:00,FILE_CREATED,deployer,build-server,198.51.100.44
